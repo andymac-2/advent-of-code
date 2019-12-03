@@ -14,21 +14,21 @@ fn program_p(input: &str) -> IResult<&str, Vec<usize>> {
     separated_list(char(','), number_p)(input)
 }
 
-fn run(program: &mut [usize]) {
+fn run(mem: &mut [usize]) {
     // instruction pointer
     let mut ip = 0;
     loop {
-        match program[ip] {
+        match mem[ip] {
             1 => {
-                let input1 = program[program[ip + 1]];
-                let input2 = program[program[ip + 2]];
-                program[program[ip + 3]] = input1 + input2;
+                let input1 = mem[mem[ip + 1]];
+                let input2 = mem[mem[ip + 2]];
+                mem[mem[ip + 3]] = input1 + input2;
                 ip += 4;
             }
             2 => {
-                let input1 = program[program[ip + 1]];
-                let input2 = program[program[ip + 2]];
-                program[program[ip + 3]] = input1 * input2;
+                let input1 = mem[mem[ip + 1]];
+                let input2 = mem[mem[ip + 2]];
+                mem[mem[ip + 3]] = input1 * input2;
                 ip += 4;
             }
             99 => return,
@@ -37,21 +37,21 @@ fn run(program: &mut [usize]) {
     }
 }
 
-pub fn part1(mut program: Vec<usize>) -> usize {
-    program[1] = 12;
-    program[2] = 2;
-    run(&mut program);
-    program[0]
+pub fn part1(mut mem: Vec<usize>) -> usize {
+    mem[1] = 12;
+    mem[2] = 2;
+    run(&mut mem);
+    mem[0]
 }
 
-pub fn part2(original_program: Vec<usize>) -> (usize, usize) {
+pub fn part2(original_mem: Vec<usize>) -> (usize, usize) {
     for x in 0..100 {
         for y in 0..100 {
-            let mut program = original_program.clone();
-            program[1] = x;
-            program[2] = y;
-            run(&mut program);
-            if program[0] == 19_690_720 {
+            let mut mem = original_mem.clone();
+            mem[1] = x;
+            mem[2] = y;
+            run(&mut mem);
+            if mem[0] == 19_690_720 {
                 return (x, y);
             }
         }
@@ -63,7 +63,7 @@ pub fn start() {
     let mut buffer = String::new();
     io::stdin().read_to_string(&mut buffer).unwrap();
 
-    let program = program_p(&buffer).unwrap().1;
+    let mem = program_p(&buffer).unwrap().1;
 
-    println!("Program Output: {:?}", part2(program));
+    println!("Program Output: {:?}", part2(mem));
 }
