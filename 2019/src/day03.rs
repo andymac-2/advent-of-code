@@ -66,7 +66,6 @@ impl WireAbs {
 fn number_p(input: &str) -> IResult<&str, i32> {
     map_res(digit1, |s: &str| s.parse())(input)
 }
-
 fn direction_p(input: &str) -> IResult<&str, Direction> {
     alt((
         value(Direction::Up, char('U')),
@@ -75,17 +74,14 @@ fn direction_p(input: &str) -> IResult<&str, Direction> {
         value(Direction::Down, char('D')),
     ))(input)
 }
-
 fn wire_segment_p(input: &str) -> IResult<&str, WireRel> {
     map(tuple((direction_p, number_p)), |(direction, length)| {
         WireRel { length, direction }
     })(input)
 }
-
 fn full_wire_p(input: &str) -> IResult<&str, Vec<WireRel>> {
     separated_list(char(','), wire_segment_p)(input)
 }
-
 fn wires_p(input: &str) -> IResult<&str, (Vec<WireRel>, Vec<WireRel>)> {
     map(
         tuple((full_wire_p, char('\n'), full_wire_p)),
@@ -143,8 +139,8 @@ pub fn part2(buffer: &str) -> i32 {
 
     for wire_seg1 in &wire1 {
         wire_1_dist += wire_seg1.wire.length;
-
         let mut wire_2_dist = 0;
+
         for wire_seg2 in &wire2 {
             wire_2_dist += wire_seg2.wire.length;
 
@@ -153,6 +149,7 @@ pub fn part2(buffer: &str) -> i32 {
                     let total_dist = wire_1_dist + wire_2_dist
                         - dist(collision, wire_seg1.end())
                         - dist(collision, wire_seg2.end());
+
                     min_so_far = min(min_so_far, total_dist)
                 }
             };
