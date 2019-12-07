@@ -100,12 +100,17 @@ impl Machine {
         usize::try_from(self.mem[self.ip]).unwrap()
     }
     fn write_parameter(&mut self, value: i32, modes: &mut ParameterModes) {
-        assert_eq!(modes.next().unwrap(), ParameterMode::Position);
+        let mode = modes.next().unwrap();
+        assert_eq!(mode, ParameterMode::Position);
+
         let addr = self.get_address();
         self.mem[addr] = value;
         self.ip += 1;
     }
-    fn run(&mut self, mut input: &[i32]) -> Vec<i32> {
+    fn run<I>(&mut self, mut input: I) -> Vec<i32>
+    where
+        I: Iterator<Item = i32>,
+    {
         let mut output = Vec::new();
         loop {
             let opcode = self.read_opcode();
@@ -122,9 +127,7 @@ impl Machine {
                     self.write_parameter(input1 * input2, &mut modes);
                 }
                 OpcodeType::Read => {
-                    let (head, tail) = input.split_first().unwrap();
-                    input = tail;
-                    self.write_parameter(*head, &mut modes);
+                    self.write_parameter(input.next().unwrap(), &mut modes);
                 }
                 OpcodeType::Write => {
                     output.push(self.read_parameter(&mut modes));
@@ -169,11 +172,11 @@ impl Machine {
 }
 
 pub fn part1(mut machine: Machine) -> Vec<i32> {
-    machine.run(&[1])
+    machine.run([1].iter().copied())
 }
 
 pub fn part2(mut machine: Machine) -> Vec<i32> {
-    machine.run(&[5])
+    machine.run([5].iter().copied())
 }
 
 pub fn start() {
