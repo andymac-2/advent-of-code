@@ -5,11 +5,11 @@ use std::io::Read;
 use crate::day05::Machine;
 
 struct Permutation {
-    iteration: u32,
-    length: u32,
+    iteration: usize,
+    length: usize,
 }
 impl Permutation {
-    fn new(length: u32) -> Self {
+    fn new(length: usize) -> Self {
         Permutation {
             iteration: 0,
             length,
@@ -17,8 +17,8 @@ impl Permutation {
     }
 }
 impl Iterator for Permutation {
-    type Item = Vec<u32>;
-    fn next(&mut self) -> Option<Vec<u32>> {
+    type Item = Vec<usize>;
+    fn next(&mut self) -> Option<Vec<usize>> {
         let mut vec = Vec::new();
         let mut iteration = self.iteration;
 
@@ -53,7 +53,7 @@ pub fn part1(machine: &Machine) -> i32 {
 
 const NUM_MACHINES: usize = 5;
 pub fn part2(machine: &Machine) -> i32 {
-    Permutation::new(5).map(|permutation| {
+    Permutation::new(NUM_MACHINES).map(|permutation| {
         let mut inputs: Vec<_> = permutation
             .into_iter()
             .map(|phase| vec![i32::try_from(phase).unwrap() + 5])
