@@ -75,39 +75,25 @@ impl Opcode {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Machine {
     ip: usize,
     mem: Vec<i32>,
 }
 impl Machine {
-    fn new(mem: Vec<i32>) -> Machine {
+    pub fn from_string(string: &str) -> Machine {
+        program_p(string).unwrap().1
+    }
+    pub fn new(mem: Vec<i32>) -> Machine {
         Machine { ip: 0, mem }
     }
-    fn read_opcode(&mut self) -> Opcode {
-        let opcode = Opcode(self.mem[self.ip]);
-        self.ip += 1;
-        opcode
+    pub fn is_halted(&self) -> bool {
+        if let OpcodeType::Halt = Opcode(self.mem[self.ip]).op() {
+            return true;
+        }
+        false
     }
-    fn read_parameter(&mut self, modes: &mut ParameterModes) -> i32 {
-        let value = match modes.next().unwrap() {
-            ParameterMode::Immediate => self.mem[self.ip],
-            ParameterMode::Position => self.mem[self.get_address()],
-        };
-        self.ip += 1;
-        value
-    }
-    fn get_address(&self) -> usize {
-        usize::try_from(self.mem[self.ip]).unwrap()
-    }
-    fn write_parameter(&mut self, value: i32, modes: &mut ParameterModes) {
-        let mode = modes.next().unwrap();
-        assert_eq!(mode, ParameterMode::Position);
-
-        let addr = self.get_address();
-        self.mem[addr] = value;
-        self.ip += 1;
-    }
-    fn run<I>(&mut self, mut input: I) -> Vec<i32>
+    pub fn run<I>(&mut self, mut input: I) -> Vec<i32>
     where
         I: Iterator<Item = i32>,
     {
@@ -127,7 +113,13 @@ impl Machine {
                     self.write_parameter(input1 * input2, &mut modes);
                 }
                 OpcodeType::Read => {
-                    self.write_parameter(input.next().unwrap(), &mut modes);
+                    if let Some(input) = input.next() {
+                        self.write_parameter(input, &mut modes);
+                    }
+                    else {
+                        self.ip -= 1;
+                        break;
+                    }
                 }
                 OpcodeType::Write => {
                     output.push(self.read_parameter(&mut modes));
@@ -164,10 +156,38 @@ impl Machine {
                         self.write_parameter(0, &mut modes);
                     }
                 }
-                OpcodeType::Halt => break,
+                OpcodeType::Halt => {
+                    self.ip -= 1;
+                    break;
+                }
             }
         }
         output
+    }
+
+    fn read_opcode(&mut self) -> Opcode {
+        let opcode = Opcode(self.mem[self.ip]);
+        self.ip += 1;
+        opcode
+    }
+    fn read_parameter(&mut self, modes: &mut ParameterModes) -> i32 {
+        let value = match modes.next().unwrap() {
+            ParameterMode::Immediate => self.mem[self.ip],
+            ParameterMode::Position => self.mem[self.get_address()],
+        };
+        self.ip += 1;
+        value
+    }
+    fn get_address(&self) -> usize {
+        usize::try_from(self.mem[self.ip]).unwrap()
+    }
+    fn write_parameter(&mut self, value: i32, modes: &mut ParameterModes) {
+        let mode = modes.next().unwrap();
+        assert_eq!(mode, ParameterMode::Position);
+
+        let addr = self.get_address();
+        self.mem[addr] = value;
+        self.ip += 1;
     }
 }
 
