@@ -39,11 +39,11 @@ impl Iterator for Permutation {
     }
 }
 
-pub fn part1(machine: &Machine) -> i32 {
+pub fn part1(machine: &Machine) -> i64 {
     Permutation::new(5).map(|permutation| {
         permutation.into_iter().fold(0, |input, phase| {
             let mut machine = machine.clone();
-            let phase = i32::try_from(phase).unwrap();
+            let phase = i64::try_from(phase).unwrap();
             machine.run([phase, input].iter().copied())[0]
         })
     })
@@ -52,11 +52,11 @@ pub fn part1(machine: &Machine) -> i32 {
 }
 
 const NUM_MACHINES: usize = 5;
-pub fn part2(machine: &Machine) -> i32 {
+pub fn part2(machine: &Machine) -> i64 {
     Permutation::new(NUM_MACHINES).map(|permutation| {
         let mut inputs: Vec<_> = permutation
             .into_iter()
-            .map(|phase| vec![i32::try_from(phase).unwrap() + 5])
+            .map(|phase| vec![i64::try_from(phase).unwrap() + 5])
             .collect();
         let mut machines: Vec<_> = (0..NUM_MACHINES)
             .map(|_| machine.clone())

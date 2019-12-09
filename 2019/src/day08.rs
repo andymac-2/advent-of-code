@@ -63,7 +63,7 @@ pub fn start() {
     let mut buffer = String::new();
     io::stdin().read_to_string(&mut buffer).unwrap();
 
-    let image = image_p(buffer.as_bytes()).unwrap().1;
+    let (_input, image) = image_p(buffer.as_bytes()).unwrap();
 
     println!("Program Output: {:?}", part2(image));
 }
