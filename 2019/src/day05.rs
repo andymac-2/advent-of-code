@@ -205,8 +205,7 @@ impl Machine {
         usize::try_from(self.mem_get(self.pc)).unwrap()
     }
     fn sp_indirect_addr(&self) -> usize {
-        let offset = self.mem_get(self.pc);
-        usize::try_from(self.sp + offset).unwrap()
+        usize::try_from(self.sp + self.mem_get(self.pc)).unwrap()
     }
 
     fn write_parameter(&mut self, value: i64, modes: &mut ParameterModes) {
