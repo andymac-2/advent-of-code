@@ -12,7 +12,7 @@ fn line_p(s: &[u8]) -> ParseResult<&[u8]> {
 fn arena_p(s: &[u8]) -> ParseResult<Arena> {
     map(
         sep_by(line_p, byte(b'\n')),
-        |buffer| Arena(buffer)
+        Arena
     )(s)
 }
 
@@ -98,7 +98,7 @@ impl Point {
     fn new(x: i32, y: i32) -> Self {
         Point {x, y}
     }
-    fn len_sq(&self) -> i32 {
+    fn len_sq(self) -> i32 {
         self.x * self.x + self.y * self.y
     }
     fn normalize (self) -> Self {
@@ -151,7 +151,7 @@ pub fn part2(arena: Arena) {
         }
     }
 
-    let (max_asteroid, surrounds) = buffer
+    let (_max_asteroid, surrounds) = buffer
         .into_iter()
         .max_by_key(|(_k, v)| v.len())
         .unwrap();
