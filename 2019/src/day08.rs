@@ -17,7 +17,7 @@ fn image_p(input: &[u8]) -> IResult<&[u8], Vec<&[u8]>> {
     many0(layer_p)(input)
 }
 
-pub fn part1 (image: Vec<&[u8]>) -> usize {
+pub fn part1(image: Vec<&[u8]>) -> usize {
     let mut lowest_zeroes = usize::max_value();
     let mut two_by_ones = 0;
     for layer in image {
@@ -52,7 +52,7 @@ pub fn part2(image: Vec<&[u8]>) {
             match pixel {
                 b'1' => print!("{}  {}", ANSI_GREEN, ANSI_RESET),
                 b'0' => print!("  "),
-                _ => print!("{}  {}", ANSI_RED, ANSI_RESET)
+                _ => print!("{}  {}", ANSI_RED, ANSI_RESET),
             }
         }
         println!();

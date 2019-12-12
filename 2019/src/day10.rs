@@ -1,7 +1,7 @@
+use std::collections::{HashMap, HashSet};
+use std::convert::TryInto;
 use std::io;
 use std::io::Read;
-use std::convert::TryInto;
-use std::collections::{HashMap, HashSet};
 
 use crate::parsers::*;
 
@@ -10,13 +10,10 @@ fn line_p(s: &[u8]) -> ParseResult<&[u8]> {
 }
 
 fn arena_p(s: &[u8]) -> ParseResult<Arena> {
-    map(
-        sep_by(line_p, byte(b'\n')),
-        Arena
-    )(s)
+    map(sep_by(line_p, byte(b'\n')), Arena)(s)
 }
 
-fn gcd (a: i32, b: i32) -> i32 {
+fn gcd(a: i32, b: i32) -> i32 {
     let mut a = a.abs();
     let mut b = b.abs();
 
@@ -29,7 +26,7 @@ fn gcd (a: i32, b: i32) -> i32 {
     a
 }
 
-pub struct Arena<'a>(Vec<&'a[u8]>);
+pub struct Arena<'a>(Vec<&'a [u8]>);
 impl<'a> Arena<'a> {
     fn iter(&self) -> Iter {
         Iter::new(self.0.as_ref())
@@ -43,7 +40,7 @@ struct Iter<'a> {
 }
 impl<'a> Iter<'a> {
     fn new(buffer: &'a [&'a [u8]]) -> Self {
-        Iter {buffer, x: 0, y: 0,}
+        Iter { buffer, x: 0, y: 0 }
     }
 }
 impl<'a> Iterator for Iter<'a> {
@@ -96,12 +93,12 @@ impl std::ops::Add for Point {
 }
 impl Point {
     fn new(x: i32, y: i32) -> Self {
-        Point {x, y}
+        Point { x, y }
     }
     fn len_sq(self) -> i32 {
         self.x * self.x + self.y * self.y
     }
-    fn normalize (self) -> Self {
+    fn normalize(self) -> Self {
         let gcd = gcd(self.x, self.y);
         if gcd == 0 {
             self
@@ -129,7 +126,7 @@ pub fn part1(arena: Arena) {
         .into_iter()
         .max_by_key(|(_k, v)| v.len())
         .map(|(k, v)| (k, v.len() - 1, v));
-    
+
     println!("{:?}", max_asteroid);
 }
 
@@ -151,20 +148,15 @@ pub fn part2(arena: Arena) {
         }
     }
 
-    let (_max_asteroid, surrounds) = buffer
-        .into_iter()
-        .max_by_key(|(_k, v)| v.len())
-        .unwrap();
+    let (_max_asteroid, surrounds) = buffer.into_iter().max_by_key(|(_k, v)| v.len()).unwrap();
 
     let mut surrounding: Vec<_> = surrounds.into_iter().collect();
-    surrounding.sort_by(|(d1, _), (d2, _)| {
-        d1.angle().partial_cmp(&d2.angle()).unwrap()
-    });
-    
+    surrounding.sort_by(|(d1, _), (d2, _)| d1.angle().partial_cmp(&d2.angle()).unwrap());
+
     println!("{:?}", surrounding[200 - 1].1);
 }
 
-pub fn start () {
+pub fn start() {
     let mut buffer = String::new();
     io::stdin().read_to_string(&mut buffer).unwrap();
 

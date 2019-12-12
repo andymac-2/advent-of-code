@@ -123,8 +123,7 @@ impl Machine {
                 OpcodeType::Read => {
                     if let Some(input) = input.next() {
                         self.write_parameter(input, &mut modes);
-                    }
-                    else {
+                    } else {
                         self.pc -= 1;
                         break;
                     }

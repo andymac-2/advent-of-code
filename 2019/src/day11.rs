@@ -8,7 +8,10 @@ use crate::day05::Machine;
 #[must_use]
 #[derive(Copy, Clone, Debug)]
 enum Direction {
-    Up, Right, Down, Left
+    Up,
+    Right,
+    Down,
+    Left,
 }
 impl Direction {
     fn turn_cw(&mut self) {
@@ -76,7 +79,7 @@ impl TryFrom<i64> for Colour {
         match int {
             1 => Ok(Colour::White),
             0 => Ok(Colour::Black),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 }
@@ -97,7 +100,7 @@ impl TryFrom<i64> for Rotation {
         match int {
             1 => Ok(Rotation::CW),
             0 => Ok(Rotation::CCW),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 }
@@ -125,7 +128,7 @@ impl Robot {
     fn step(&mut self) {
         let input = std::iter::once(self.get().into());
         let output = self.cpu.run(input);
-        
+
         assert_eq!(output.len(), 2);
 
         self.paint(output[0].try_into().unwrap());
@@ -140,9 +143,7 @@ impl Robot {
         self.position.step(self.direction);
     }
     fn get(&self) -> Colour {
-        *self.canvas
-            .get(&self.position)
-            .unwrap_or(&Colour::Black)
+        *self.canvas.get(&self.position).unwrap_or(&Colour::Black)
     }
 }
 
@@ -159,9 +160,7 @@ pub fn part2(cpu: &str) {
 
     for y in 0..6 {
         for x in 0..50 {
-            let colour = robot.canvas
-                .get(&Point(x, y))
-                .unwrap_or(&Colour::Black);
+            let colour = robot.canvas.get(&Point(x, y)).unwrap_or(&Colour::Black);
             print!("{}", colour)
         }
         println!()

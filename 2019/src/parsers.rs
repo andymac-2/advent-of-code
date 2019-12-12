@@ -1,6 +1,6 @@
 pub type ParseResult<'a, R> = Option<(&'a [u8], R)>;
 
-pub fn token<P, R>(predicate: P) -> impl Fn(&[u8]) -> ParseResult<R> 
+pub fn token<P, R>(predicate: P) -> impl Fn(&[u8]) -> ParseResult<R>
 where
     P: Fn(u8) -> Option<R>,
 {
@@ -11,27 +11,32 @@ where
     }
 }
 
-pub fn satisfy<P>(predicate: P) -> impl Fn(&[u8]) -> ParseResult<u8>
-where
-    P: Fn(u8) -> bool
-{
-    token(move |c| {
-        if predicate(c) {
-            Some(c)
-        }
-        else {
+const EMPTY_SLICE: &[u8] = &[];
+pub fn chunk<'a>(chunk: &'a [u8]) -> impl Fn(&'a [u8]) -> ParseResult<()> {
+    move |s| {
+        if chunk == s.get(0..chunk.len())? {
+            let rest = s.get(chunk.len()..).unwrap_or(EMPTY_SLICE);
+            Some((rest, ()))
+        } else {
             None
         }
-    })
+    }
+}
+
+pub fn satisfy<P>(predicate: P) -> impl Fn(&[u8]) -> ParseResult<u8>
+where
+    P: Fn(u8) -> bool,
+{
+    token(move |c| if predicate(c) { Some(c) } else { None })
 }
 
 pub fn byte(byte: u8) -> impl Fn(&[u8]) -> ParseResult<u8> {
     satisfy(move |c| c == byte)
 }
 
-pub fn take_while_p<P>(predicate: P) -> impl Fn(&[u8]) -> ParseResult<&[u8]> 
+pub fn take_while_p<P>(predicate: P) -> impl Fn(&[u8]) -> ParseResult<&[u8]>
 where
-    P: Fn(u8) -> bool
+    P: Fn(u8) -> bool,
 {
     move |s| {
         let mut ix = 0;
@@ -46,9 +51,9 @@ where
     }
 }
 
-pub fn take_while1_p<P>(predicate: P) -> impl Fn(&[u8]) -> ParseResult<&[u8]> 
+pub fn take_while1_p<P>(predicate: P) -> impl Fn(&[u8]) -> ParseResult<&[u8]>
 where
-    P: Fn(u8) -> bool
+    P: Fn(u8) -> bool,
 {
     move |s| {
         s.get(0).map(|c| predicate(*c))?;
@@ -67,7 +72,7 @@ where
 
 pub fn take_while<P, R>(parser: P) -> impl Fn(&[u8]) -> ParseResult<Vec<R>>
 where
-    P: Fn(&[u8]) -> ParseResult<R>
+    P: Fn(&[u8]) -> ParseResult<R>,
 {
     move |mut s| {
         let mut results = Vec::new();
@@ -83,23 +88,22 @@ pub fn map<'a, P, F, Rin, Rout>(parser: P, func: F) -> impl Fn(&'a [u8]) -> Pars
 where
     P: Fn(&'a [u8]) -> ParseResult<Rin>,
     F: Fn(Rin) -> Rout,
-    Rin: 'a
+    Rin: 'a,
 {
-    move |s| {
-        parser(s).map(|(s, result_in)| (s, func(result_in)))
-    }
+    move |s| parser(s).map(|(s, result_in)| (s, func(result_in)))
 }
 
 pub fn void<P, Rin, Rout>(parser: P) -> impl Fn(&[u8]) -> ParseResult<()>
 where
     P: Fn(&[u8]) -> ParseResult<Rin>,
 {
-    move |s| {
-        parser(s).map(|(s, _result)| (s, ()))
-    }
+    move |s| parser(s).map(|(s, _result)| (s, ()))
 }
 
-pub fn sep_by<'a, P, S, RP, RS>(parser: P, separator: S) -> impl Fn(&'a [u8]) -> ParseResult<Vec<RP>>
+pub fn sep_by<'a, P, S, RP, RS>(
+    parser: P,
+    separator: S,
+) -> impl Fn(&'a [u8]) -> ParseResult<Vec<RP>>
 where
     P: Fn(&'a [u8]) -> ParseResult<RP>,
     S: Fn(&'a [u8]) -> ParseResult<RS>,
@@ -116,8 +120,7 @@ where
 
             if let Some((new_s, _)) = separator(s_after_p) {
                 s_before_p = new_s;
-            }
-            else {
+            } else {
                 break;
             }
         }
