@@ -12,6 +12,7 @@ where
 }
 
 const EMPTY_SLICE: &[u8] = &[];
+#[allow(clippy::needless_lifetimes)]
 pub fn chunk<'a>(chunk: &'a [u8]) -> impl Fn(&'a [u8]) -> ParseResult<()> {
     move |s| {
         if chunk == s.get(0..chunk.len())? {

@@ -8,6 +8,8 @@ use nom::multi::separated_list;
 use nom::sequence::tuple;
 use nom::IResult;
 
+use serde::{Serialize, Deserialize};
+
 fn number_p(input: &str) -> IResult<&str, i64> {
     let (input, (sign, num_str)) = tuple((opt(char('-')), digit1))(input)?;
 
@@ -79,7 +81,7 @@ impl Opcode {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Machine {
     pc: usize,
     sp: i64,
@@ -101,6 +103,18 @@ impl Machine {
     pub fn mem_size(&self) -> usize {
         self.mem.len()
     }
+
+    pub fn save(&self, id: u32) {
+        let string = serde_json::to_string(self).unwrap();
+        let name = format!("./saves/save_{}.json", id);
+        std::fs::write(name, string).unwrap();
+    }
+    pub fn restore(id: u32) -> Self {
+        let name = format!("./saves/save_{}.json", id);
+        let string = std::fs::read_to_string(name).unwrap();
+        serde_json::from_str(&string).unwrap()
+    }
+
     pub fn run<I>(&mut self, mut input: I) -> Vec<i64>
     where
         I: Iterator<Item = i64>,
@@ -193,7 +207,7 @@ impl Machine {
     fn mem_get(&self, addr: usize) -> i64 {
         *self.mem.get(addr).unwrap_or(&0)
     }
-    fn mem_set(&mut self, addr: usize, value: i64) {
+    pub fn mem_set(&mut self, addr: usize, value: i64) {
         if addr >= self.mem.len() {
             self.mem.resize(addr + 1, 0);
         }
