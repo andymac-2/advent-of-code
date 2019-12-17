@@ -1,10 +1,8 @@
-use std::io;
-use std::io::Read;
-use std::convert::{TryInto, TryFrom};
+use std::convert::TryInto;
 
 use crate::day05::Machine;
 
-pub fn part1 (mut machine: Machine) -> usize {
+pub fn part1(mut machine: Machine) -> usize {
     let buffer: Vec<char> = machine
         .run(std::iter::empty())
         .into_iter()
@@ -43,25 +41,9 @@ pub fn part1 (mut machine: Machine) -> usize {
     sum
 }
 
-pub fn part2 (mut machine: Machine) {
+pub fn part2(mut machine: Machine) {
     machine.mem_set(0, 2);
-    let mut buffer = String::new();
-
-    loop {
-        let input = buffer.chars().map(|c| i64::from(u32::from(c)));
-        for char_num in machine.run(input).into_iter() {
-            match u8::try_from(char_num) {
-                Ok(char_8) => print!("{}", char::from(char_8)),
-                Err(_) => println!("{}", char_num),
-            }
-        }
-        if machine.is_halted() {
-            println!();
-            return;
-        }
-        buffer.clear();
-        io::stdin().read_line(&mut buffer).unwrap();
-    }
+    machine.terminal();
 }
 
 pub fn start() {

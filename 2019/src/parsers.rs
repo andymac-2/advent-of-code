@@ -71,12 +71,29 @@ where
     }
 }
 
-pub fn take_while<P, R>(parser: P) -> impl Fn(&[u8]) -> ParseResult<Vec<R>>
+pub fn take_while<'a, P, R>(parser: P) -> impl Fn(&'a [u8]) -> ParseResult<Vec<R>>
+where
+    P: Fn(&'a [u8]) -> ParseResult<R>,
+{
+    move |mut s| {
+        let mut results = Vec::new();
+        while let Some((new_s, result)) = parser(s) {
+            s = new_s;
+            results.push(result)
+        }
+        Some((s, results))
+    }
+}
+
+pub fn take_while1<P, R>(parser: P) -> impl Fn(&[u8]) -> ParseResult<Vec<R>>
 where
     P: Fn(&[u8]) -> ParseResult<R>,
 {
     move |mut s| {
-        let mut results = Vec::new();
+        let (new_s, result) = parser(s)?;
+        s = new_s;
+        let mut results = vec![result];
+
         while let Some((new_s, result)) = parser(s) {
             s = new_s;
             results.push(result)
@@ -94,9 +111,9 @@ where
     move |s| parser(s).map(|(s, result_in)| (s, func(result_in)))
 }
 
-pub fn void<P, Rin, Rout>(parser: P) -> impl Fn(&[u8]) -> ParseResult<()>
+pub fn void<'a, P, Rin>(parser: P) -> impl Fn(&'a [u8]) -> ParseResult<()>
 where
-    P: Fn(&[u8]) -> ParseResult<Rin>,
+    P: Fn(&'a [u8]) -> ParseResult<Rin>,
 {
     move |s| parser(s).map(|(s, _result)| (s, ()))
 }

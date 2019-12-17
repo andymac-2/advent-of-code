@@ -18,5 +18,5 @@ pub mod day16;
 pub mod day17;
 
 fn main() {
-    day17::start();
+    day14::start();
 }

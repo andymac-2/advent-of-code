@@ -105,7 +105,7 @@ impl PlanetDGroup {
                 current.0[2].get_acceleration(&current.0),
                 current.0[3].get_acceleration(&current.0),
             ];
-    
+
             for (i, accel) in accelerations.iter().enumerate() {
                 current.0[i].apply_acceleration(*accel);
             }
@@ -153,14 +153,13 @@ pub fn part1() -> i32 {
 // <x=-4, y=-6, z=7>
 // <x=6, y=-9, z=-11>
 
-
 pub fn part2() -> u64 {
     let cycle_x = PlanetDGroup::new(1, -14, -4, 6).cycle_len();
     let cycle_y = PlanetDGroup::new(-4, 9, -6, -9).cycle_len();
     let cycle_z = PlanetDGroup::new(3, -4, 7, -11).cycle_len();
 
     lcm(cycle_x, lcm(cycle_y, cycle_z))
-}   
+}
 
 pub fn start() {
     println!("Program Output: {:?}", part2());

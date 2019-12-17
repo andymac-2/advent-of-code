@@ -8,7 +8,11 @@ use crate::day05::Machine;
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 enum Pixel {
-    Empty, Wall, Block, Paddle, Ball,
+    Empty,
+    Wall,
+    Block,
+    Paddle,
+    Ball,
 }
 impl From<Pixel> for char {
     fn from(pixel: Pixel) -> char {
@@ -43,9 +47,8 @@ impl Screen {
         let mut buffer = HashMap::new();
         for entry in output.chunks_exact(3) {
             match entry {
-                [x, y, data] => buffer
-                    .insert((*x, *y), Pixel::try_from(*data).unwrap()),
-                _ => unreachable!()
+                [x, y, data] => buffer.insert((*x, *y), Pixel::try_from(*data).unwrap()),
+                _ => unreachable!(),
             };
         }
         Screen { buffer }
@@ -69,7 +72,6 @@ const KEY_R: i32 = 'r' as i32;
 const DAY_13_MACHINE: u32 = 13;
 
 pub fn part2(mut machine: Machine) {
-
     machine.mem_set(0, 2);
 
     nc::initscr();
@@ -104,7 +106,7 @@ pub fn part2(mut machine: Machine) {
                     let y = i32::try_from(*y).unwrap();
                     nc::mvaddch(y, x, c.into());
                 }
-                _ => unreachable!()
+                _ => unreachable!(),
             };
         }
         nc::refresh();

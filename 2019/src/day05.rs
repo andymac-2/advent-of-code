@@ -8,7 +8,7 @@ use nom::multi::separated_list;
 use nom::sequence::tuple;
 use nom::IResult;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 fn number_p(input: &str) -> IResult<&str, i64> {
     let (input, (sign, num_str)) = tuple((opt(char('-')), digit1))(input)?;
