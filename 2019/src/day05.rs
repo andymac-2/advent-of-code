@@ -115,6 +115,27 @@ impl Machine {
         serde_json::from_str(&string).unwrap()
     }
 
+    /// run the incode VM as an interactive terminal
+    pub fn terminal(&mut self) {
+        let mut buffer = String::new();
+
+        loop {
+            let input = buffer.chars().map(|c| i64::from(u32::from(c)));
+            for char_num in self.run(input).into_iter() {
+                match u8::try_from(char_num) {
+                    Ok(char_8) => print!("{}", char::from(char_8)),
+                    Err(_) => print!("{}", char_num),
+                }
+            }
+            if self.is_halted() {
+                println!();
+                return;
+            }
+            buffer.clear();
+            io::stdin().read_line(&mut buffer).unwrap();
+        }
+    }
+
     pub fn run<I>(&mut self, mut input: I) -> Vec<i64>
     where
         I: Iterator<Item = i64>,

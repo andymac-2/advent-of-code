@@ -1,7 +1,5 @@
-use std::io;
-use std::io::Read;
 use std::collections::HashMap;
-use std::convert::{TryFrom, TryInto};
+use std::convert::TryFrom;
 
 use ncurses as nc;
 use ncurses::constants as ncc;
