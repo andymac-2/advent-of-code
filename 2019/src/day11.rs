@@ -7,7 +7,7 @@ use crate::day05::Machine;
 
 #[must_use]
 #[derive(Copy, Clone, Debug)]
-enum Direction {
+pub enum Direction {
     Up,
     Right,
     Down,
@@ -36,12 +36,35 @@ impl Direction {
             Rotation::CW => self.turn_cw(),
         }
     }
+
+    pub fn to_joystick_day_11(self) -> i64 {
+        match self {
+            Self::Up => 1,
+            Self::Right => 4,
+            Self::Down => 2,
+            Self::Left => 3,
+        }
+    }
+    pub fn opposite(self) -> Self {
+        match self {
+            Self::Up => Self::Down,
+            Self::Right => Self::Left,
+            Self::Down => Self::Up,
+            Self::Left => Self::Right,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Eq, PartialEq, Hash)]
-struct Point(i32, i32);
+pub struct Point(pub i32, pub i32);
 impl Point {
-    fn step(&mut self, direction: Direction) {
+    pub fn x(self) -> i32 {
+        self.0
+    }
+    pub fn y(self) -> i32 {
+        self.1
+    }
+    pub fn step(&mut self, direction: Direction) {
         match direction {
             Direction::Up => self.1 -= 1,
             Direction::Right => self.0 += 1,
