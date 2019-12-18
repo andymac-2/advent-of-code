@@ -6,7 +6,7 @@ use std::io::Read;
 use crate::day05::Machine;
 
 #[must_use]
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Direction {
     Up,
     Right,
@@ -52,6 +52,15 @@ impl Direction {
             Self::Down => Self::Up,
             Self::Left => Self::Right,
         }
+    }
+    pub fn for_each<F>(mut func: F)
+    where
+        F: FnMut(Direction),
+    {
+        func(Direction::Up);
+        func(Direction::Right);
+        func(Direction::Down);
+        func(Direction::Left);
     }
 }
 
