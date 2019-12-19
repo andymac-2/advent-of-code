@@ -71,7 +71,7 @@ where
     }
 }
 
-pub fn take_while<'a, P, R>(parser: P) -> impl Fn(&'a [u8]) -> ParseResult<Vec<R>>
+pub fn many<'a, P, R>(parser: P) -> impl Fn(&'a [u8]) -> ParseResult<Vec<R>>
 where
     P: Fn(&'a [u8]) -> ParseResult<R>,
 {
@@ -85,7 +85,7 @@ where
     }
 }
 
-pub fn take_while1<P, R>(parser: P) -> impl Fn(&[u8]) -> ParseResult<Vec<R>>
+pub fn many1<P, R>(parser: P) -> impl Fn(&[u8]) -> ParseResult<Vec<R>>
 where
     P: Fn(&[u8]) -> ParseResult<R>,
 {

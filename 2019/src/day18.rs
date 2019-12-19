@@ -318,11 +318,12 @@ pub fn part2() {
         .expect("Something went wrong reading the file");
 
     let mut maze = Maze::from_str(&buffer);
+    println!("{}", maze);
     maze.remove_dead_ends();
     println!("{}", maze);
     println!("{}", maze.co_solve());
 }
 
 pub fn start() {
-    println!("Program Output: {:?}", part2());
+    println!("Program Output: {:?}", part1());
 }

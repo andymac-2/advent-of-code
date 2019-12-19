@@ -3,7 +3,7 @@ use std::convert::TryFrom;
 use crate::parsers::*;
 
 fn numbers_p(s: &[u8]) -> ParseResult<Vec<i32>> {
-    take_while(token(|c| {
+    many(token(|c| {
         char::from(c)
             .to_digit(10)
             .map(|n| i32::try_from(n).unwrap())
@@ -129,7 +129,7 @@ pub fn start() {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]
