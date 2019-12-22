@@ -145,3 +145,13 @@ where
         Some((s_after_p, results))
     }
 }
+
+pub fn optional<'a, P, R>(parser: P) -> impl Fn(&'a [u8]) -> ParseResult<Option<R>>
+where
+    P: Fn(&'a [u8]) -> ParseResult<R>,
+{
+    move |s| match parser(s) {
+        Some((new_s, result)) => Some((new_s, Some(result))),
+        None => Some((s, None)),
+    }
+}

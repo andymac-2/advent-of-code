@@ -135,6 +135,14 @@ impl Machine {
             io::stdin().read_line(&mut buffer).unwrap();
         }
     }
+    pub fn print_mem(&self) {
+        for &char_num in self.mem.iter() {
+            match u8::try_from(char_num) {
+                Ok(char_8) => print!("{}", char::from(char_8)),
+                Err(_) => print!("({})", char_num),
+            }
+        }
+    }
 
     pub fn run<I>(&mut self, mut input: I) -> Vec<i64>
     where

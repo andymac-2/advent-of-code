@@ -1,7 +1,13 @@
 use crate::day05::Machine;
 
 pub fn part1(mut machine: Machine) {
+    println!("Memory used: {}", machine.mem_size());
+    machine.print_mem();
+    print!("\n\n\n---------\n\n\n");
     machine.terminal();
+    print!("\n\n\n---------\n\n\n");
+    println!("Memory used: {}", machine.mem_size());
+    machine.print_mem();
 }
 
 pub fn start() {
