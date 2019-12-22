@@ -111,10 +111,6 @@ pub fn part1(s: &str) -> i128 {
     deck.position_of_card(2019)
 }
 
-const STARTING_POSITION: i128 = 2020;
-const NUM_CARDS: i128 = 119_315_717_514_047;
-const SHUFFLES: i128 = 101_741_582_076_661;
-
 pub fn part2(mut shuffles: i128, mut position: i128, deck: &Deck) -> i128 {
     let cards = deck.len;
     let forward_b = deck.position_of_card(0);
@@ -127,13 +123,16 @@ pub fn part2(mut shuffles: i128, mut position: i128, deck: &Deck) -> i128 {
             position = (m * position + b) % cards;
         }
         shuffles >>= 1;
-        let tmp = m * b;
-        b = (tmp + b) % cards;
+        b = (m * b + b) % cards;
         m = (m * m) % cards;
     }
 
     position
 }
+
+const STARTING_POSITION: i128 = 2020;
+const NUM_CARDS: i128 = 119_315_717_514_047;
+const SHUFFLES: i128 = 101_741_582_076_661;
 
 pub fn start() {
     let buffer = std::fs::read_to_string("./inputs/day22.txt").unwrap();
