@@ -60,22 +60,22 @@ pub struct Deck {
     shuffles: Vec<Shuffle>,
 }
 impl Deck {
-    fn from_str(len: i128, s: &str) -> Self {
+    pub fn from_str(len: i128, s: &str) -> Self {
         Deck {
             len,
             shuffles: shuffles(s.as_bytes()).unwrap().1,
         }
     }
-    fn new(len: i128) -> Self {
+    pub fn new(len: i128) -> Self {
         Deck {
             len,
             shuffles: Vec::new(),
         }
     }
-    fn shuffle(&mut self, shuffle: Shuffle) {
+    pub fn shuffle(&mut self, shuffle: Shuffle) {
         self.shuffles.push(shuffle)
     }
-    fn get(&self, mut position: i128) -> i128 {
+    pub fn get(&self, mut position: i128) -> i128 {
         for shuffle in self.shuffles.iter().rev().copied() {
             assert!(position >= 0 && position < self.len);
             match shuffle {
@@ -100,7 +100,7 @@ impl Deck {
 }
 
 #[derive(Clone, Copy, Debug)]
-enum Shuffle {
+pub enum Shuffle {
     Stack,
     Cut(i128),
     Increment(i128),
