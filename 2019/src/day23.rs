@@ -16,11 +16,11 @@ impl Network {
             .collect();
         let packets = VecDeque::new();
 
-        let mut network = Network { 
+        let mut network = Network {
             machines,
             packets,
             current_idle: 0,
-            nat: None
+            nat: None,
         };
 
         for i in 0..network.machines.len() {
@@ -34,9 +34,7 @@ impl Network {
     fn disperse(&mut self, output: &[i64]) {
         for packet in output.chunks_exact(3) {
             match packet {
-                [addr, x, y] => {                        
-                    self.packets.push_back([*addr, *x, *y])
-                }
+                [addr, x, y] => self.packets.push_back([*addr, *x, *y]),
                 _ => unreachable!(),
             }
         }
@@ -51,14 +49,12 @@ impl Network {
 
             if let Some(machine) = self.machines.get_mut(addr) {
                 machine.run([x, y].iter().copied())
-            }
-            else {
+            } else {
                 assert!(addr == 255);
                 self.nat = Some((x, y));
-                return ;
+                return;
             }
-        }
-        else {
+        } else {
             let current = self.current_idle;
             self.current_idle += 1;
             if self.current_idle >= self.machines.len() {
@@ -66,8 +62,7 @@ impl Network {
                 let (x, y) = self.nat.unwrap();
                 dbg!(y);
                 self.machines[0].run([x, y].iter().copied())
-            }
-            else {
+            } else {
                 self.machines[current].run(std::iter::once(-1))
             }
         };
@@ -78,7 +73,6 @@ impl Network {
         self.nat
     }
 }
-
 
 const NUM_MACHINES: usize = 50;
 pub fn part1(machine: &Machine) -> i64 {

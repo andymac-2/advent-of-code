@@ -1,6 +1,6 @@
-use std::collections::{HashSet, HashMap};
+use crate::parsers::{byte, ParseResult};
+use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
-use crate::parsers::{ParseResult, byte};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 enum Cell {
@@ -67,12 +67,8 @@ impl Eris {
         assert!(y < Eris::HEIGHT && y >= 0);
 
         match cell {
-            Cell::Bug => {
-                self.0 |= 1 << Eris::index(x, y)
-            }
-            Cell::Empty => {
-                self.0 &= !(1 << Eris::index(x, y))
-            }
+            Cell::Bug => self.0 |= 1 << Eris::index(x, y),
+            Cell::Empty => self.0 &= !(1 << Eris::index(x, y)),
         }
     }
     fn next(self) -> Self {
@@ -122,7 +118,7 @@ impl std::fmt::Display for Eris {
 }
 
 pub struct ErisRec {
-    eris: HashSet<(i32, u8, u8)>
+    eris: HashSet<(i32, u8, u8)>,
 }
 #[derive(Debug, Copy, Clone)]
 pub struct ErisCentreNotEmpty;
@@ -163,52 +159,44 @@ impl ErisRec {
             // left
             if x == 0 {
                 increment(level - 1, 1, 2);
-            }
-            else if x == 3 && y == 2 {
+            } else if x == 3 && y == 2 {
                 for iy in 0..5 {
                     increment(level + 1, 4, iy);
                 }
-            }
-            else {
+            } else {
                 increment(level, x - 1, y);
             }
 
             // right
             if x == 4 {
                 increment(level - 1, 3, 2);
-            }
-            else if x == 1 && y == 2 {
+            } else if x == 1 && y == 2 {
                 for iy in 0..5 {
                     increment(level + 1, 0, iy);
                 }
-            }
-            else {
+            } else {
                 increment(level, x + 1, y);
             }
 
             // up
             if y == 0 {
                 increment(level - 1, 2, 1);
-            }
-            else if y == 3 && x == 2 {
+            } else if y == 3 && x == 2 {
                 for ix in 0..5 {
                     increment(level + 1, ix, 4);
                 }
-            }
-            else {
+            } else {
                 increment(level, x, y - 1);
             }
 
             // down
             if y == 4 {
                 increment(level - 1, 2, 3);
-            }
-            else if y == 1 && x == 2 {
+            } else if y == 1 && x == 2 {
                 for ix in 0..5 {
                     increment(level + 1, ix, 0);
                 }
-            }
-            else {
+            } else {
                 increment(level, x, y + 1);
             }
         }
@@ -225,9 +213,7 @@ impl ErisRec {
                 next.insert(index);
             }
         }
-        ErisRec {
-            eris: next
-        }
+        ErisRec { eris: next }
     }
     fn size(&self) -> usize {
         self.eris.len()
@@ -239,7 +225,7 @@ pub fn part1(mut eris: Eris) -> u32 {
     loop {
         println!("{}", eris);
         if !seen.insert(eris) {
-            break eris.value()
+            break eris.value();
         }
         eris = eris.next();
     }
@@ -253,14 +239,10 @@ pub fn part2(eris: Eris) -> usize {
     eris_rec.size()
 }
 
-
 pub fn start() {
     let buffer = std::fs::read_to_string("./inputs/day24.txt").unwrap();
     let eris = Eris::eris(buffer.as_bytes()).unwrap().1;
-    println!(
-        "Program Output: {:?}",
-        part2(eris)
-    );
+    println!("Program Output: {:?}", part2(eris));
 }
 
 #[cfg(test)]
